@@ -3,6 +3,7 @@ package com.naydenova.pharmacy_items;
 import org.htmlunit.WebClient;
 import org.htmlunit.html.*;
 import org.springframework.stereotype.Service;
+import org.w3c.dom.NamedNodeMap;
 
 
 import java.io.IOException;
@@ -53,49 +54,47 @@ public class SopharmacyService {
     }
 
     private static HtmlPage typeSearchedWord(String itemName, HtmlPage searchPage) throws IOException {
-        HtmlForm form = searchPage.getFormByName("search_form_HeaderSearchBoxComponent");
-        HtmlInput inputField = form.getInputByName("text");
-        HtmlButton submitButton = (HtmlButton) form.getFirstByXPath("//button[@type='submit']");
+        final HtmlForm form = searchPage.getFormByName("search_form_HeaderSearchBoxComponent");
+        final HtmlInput inputField = form.getInputByName("text");
+        final HtmlButton submitButton = (HtmlButton) form.getFirstByXPath("//button[@type='submit']");
 
-        inputField.type("\""+itemName+"\"");
+        inputField.type("\"" + itemName + "\"");
         return submitButton.click();
     }
 
     private static String getNextPageUrl(HtmlPage resultPage) {
-        List<Object> nextPageAnchors = resultPage.
+        final List<Object> nextPageAnchors = resultPage.
                 getByXPath("//a[@class='pagination__arrow']");
 
         if (nextPageAnchors.isEmpty()) {
             return null;
         }
 
-        HtmlAnchor anchor = (HtmlAnchor) resultPage.
+        final HtmlAnchor anchor = (HtmlAnchor) resultPage.
                 getByXPath("//a[@class='pagination__arrow']").get(0);
-        String hrefAttribute = anchor.getHrefAttribute();
+        final String hrefAttribute = anchor.getHrefAttribute();
         return "https://sopharmacy.bg/bg/sophSearch/" + hrefAttribute;
 
     }
 
 
     private static List<Item> parseResults(HtmlPage resultPage) {
-        List<HtmlDivision> pageItems = resultPage.getByXPath("//div[@class='products-item ']");
+        final List<HtmlDivision> pageItems = resultPage.getByXPath("//div[@class='products-item ']");
+        return pageItems.stream().map(SopharmacyService::createItem).collect(Collectors.toList());
+    }
 
-        return pageItems.stream().map(item -> {
-            String name = item.querySelector("h2").getTextContent().trim();
-            String priceString = item.querySelector("strong.price--s").getTextContent().trim();
-            Double price = convertPrice(priceString);
+    private static Item createItem(HtmlDivision divItem) {
+        final String name = divItem.querySelector("h2").getTextContent().trim();
+        final String priceString = divItem.querySelector("strong.price--s").getTextContent().trim();
+        final Double price = convertPrice(priceString);
 
-            return new Item(name, price);
-        }).collect(Collectors.toList());
+        String imageUrlString =divItem.querySelector("img").getAttributes().getNamedItem("data-srcset").getTextContent();
+        final String imageUrl = "https://sopharmacy.bg/" + imageUrlString;
+        return new Item(name, price, imageUrl);
     }
 
     private static Double convertPrice(String priceString) {
-//        String resultPrice = priceString
-//                .substring(0, priceString.length() - 3).trim()
-//                .replace(",", ".").replace(" ", "").trim();
-
-        String resultPrice = priceString.split("лв.")[0].replace(",", ".").replace(" ", "").trim();
-
+        final String resultPrice = priceString.split("лв.")[0].replace(",", ".").replace(" ", "").trim();
         return Double.parseDouble(resultPrice);
     }
 }
