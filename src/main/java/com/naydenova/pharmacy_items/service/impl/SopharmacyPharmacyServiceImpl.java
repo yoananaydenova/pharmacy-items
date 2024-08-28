@@ -1,35 +1,18 @@
 package com.naydenova.pharmacy_items.service.impl;
 
 import com.naydenova.pharmacy_items.Item;
-import com.naydenova.pharmacy_items.service.PharmacyService;
 import com.naydenova.pharmacy_items.service.SopharmacyPharmacyService;
 import org.htmlunit.html.*;
 import org.springframework.stereotype.Service;
 
-
-import java.io.IOException;
-import java.util.List;
-import java.util.stream.Collectors;
-
-
-
-
 @Service
 public class SopharmacyPharmacyServiceImpl implements SopharmacyPharmacyService {
 
-    public static final String DOMAIN = "https://sopharmacy.bg/bg/sophSearch";
+    public static final String SEARCH_DOMAIN = "https://sopharmacy.bg/bg/sophSearch/?text=";
     private static final String PHARMACY_NAME = "SOpharmacy";
     private static final String ITEM_XPATH = "//div[@class='products-item ']";
     public static final String NEXT_PAGE_XPATH = "//a[@class='pagination__arrow']";
 
-    public HtmlPage typeSearchedWord(String itemName, HtmlPage searchPage) throws IOException {
-        final HtmlForm form = searchPage.getFormByName("search_form_HeaderSearchBoxComponent");
-        final HtmlInput inputField = form.getInputByName("text");
-        final HtmlButton submitButton = (HtmlButton) form.getFirstByXPath("//button[@type='submit']");
-
-        inputField.type(itemName);
-        return submitButton.click();
-    }
 
     @Override
     public String getNextPageUrl(HtmlPage resultPage)  {
@@ -38,8 +21,8 @@ public class SopharmacyPharmacyServiceImpl implements SopharmacyPharmacyService 
     }
 
     @Override
-    public String getDomainUrl() {
-        return DOMAIN;
+    public String getSearchDomainUrl() {
+        return SEARCH_DOMAIN;
     }
 
     @Override
