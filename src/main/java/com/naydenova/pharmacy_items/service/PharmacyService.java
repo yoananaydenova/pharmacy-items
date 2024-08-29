@@ -5,6 +5,7 @@ import org.htmlunit.BrowserVersion;
 import org.htmlunit.WebClient;
 import org.htmlunit.html.HtmlAnchor;
 import org.htmlunit.html.HtmlDivision;
+import org.htmlunit.html.HtmlElement;
 import org.htmlunit.html.HtmlPage;
 
 import java.io.IOException;
@@ -20,7 +21,7 @@ public interface PharmacyService {
 
     String getNextPageXpath();
 
-    Item createItem(HtmlDivision divItem);
+    Item createItem(HtmlElement divItem);
 
 
     default List<Item> parseResults(HtmlPage resultPage, String itemXpath) {

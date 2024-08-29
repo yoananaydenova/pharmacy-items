@@ -36,7 +36,7 @@ public class SopharmacyPharmacyServiceImpl implements SopharmacyPharmacyService 
     }
 
     @Override
-    public Item createItem(HtmlDivision divItem) {
+    public Item createItem(HtmlElement divItem) {
         final String itemName = divItem.querySelector("h2").getTextContent().trim();
 
         final String priceString = divItem.querySelector("strong.price--s").getTextContent().trim();

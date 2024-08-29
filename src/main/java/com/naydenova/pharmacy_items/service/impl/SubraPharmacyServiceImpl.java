@@ -31,7 +31,7 @@ public class SubraPharmacyServiceImpl implements SubraPharmacyService {
 
 
     @Override
-    public Item createItem(HtmlDivision divItem) {
+    public Item createItem(HtmlElement divItem) {
         final String itemName = divItem.querySelector("a.product-card__text-link").getTextContent().trim();
 
         final String priceString = divItem.querySelector("div.product-card__price").getTextContent().trim();
