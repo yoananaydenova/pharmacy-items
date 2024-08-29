@@ -1,14 +1,11 @@
 package com.naydenova.pharmacy_items.service.impl;
 
 import com.naydenova.pharmacy_items.Item;
+import com.naydenova.pharmacy_items.service.PharmacyService;
 import com.naydenova.pharmacy_items.service.RemediumPharmacyService;
-import org.htmlunit.html.HtmlAnchor;
 import org.htmlunit.html.HtmlElement;
 import org.htmlunit.html.HtmlPage;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 
 @Service
@@ -18,10 +15,13 @@ public class RemediumPharmacyServiceImpl implements RemediumPharmacyService {
     private static final String PHARMACY_NAME = "Remedium";
     private static final String ITEM_XPATH = "//a[@class='LineItem__ItemLinkWrapper-sc-1imtm0n-0 gRUunT']";
     public static final String NEXT_PAGE_XPATH = "//a[@aria-label='Next page']";
+
+    private long limit = 10;
+
     @Override
-    public String getNextPageUrl(HtmlPage resultPage)  {
+    public String getNextPageUrl(HtmlPage resultPage) {
         final String nextPageUrl = RemediumPharmacyService.super.getNextPageUrl(resultPage);
-        return nextPageUrl == null ? null : "https://remedium.bg" +nextPageUrl;
+        return nextPageUrl == null ? null : "https://remedium.bg" + nextPageUrl;
     }
 
     @Override
@@ -40,18 +40,26 @@ public class RemediumPharmacyServiceImpl implements RemediumPharmacyService {
     }
 
     @Override
-    public List<Item> parseResults(HtmlPage resultPage, String itemXpath) {
-
-        final List<HtmlAnchor> pageItems = resultPage.getByXPath(itemXpath);
-        return pageItems.stream().map(this::createItem).collect(Collectors.toList());
+    public PharmacyService setLimit(long limit) {
+        this.limit = limit;
+        return this;
     }
+
+    @Override
+    public long getLimit() {
+        return this.limit;
+    }
+
 
     @Override
     public Item createItem(HtmlElement divItem) {
         final String itemName = divItem.querySelector("p.LineItem__ItemName-sc-1imtm0n-3").getTextContent().trim();
 
-        final String priceString = divItem.querySelector("div.Price__RegularPrice-sc-14hy5o8-2").getTextContent().trim();
-        final Double price = convertPrice(priceString);
+        HtmlElement priceElement = divItem.querySelector("div.Price__RegularPrice-sc-14hy5o8-2");
+        if (priceElement == null) {
+            priceElement = divItem.querySelector("strong.Price__DiscountedPrice-sc-14hy5o8-7");
+        }
+        final Double price = convertPrice(priceElement.getTextContent().trim());
 
         final String itemUrlString = divItem
                 .getAttributes().getNamedItem("href").getTextContent();
@@ -60,7 +68,7 @@ public class RemediumPharmacyServiceImpl implements RemediumPharmacyService {
         final String imageUrl = divItem.querySelector("img.LazyResponsiveImage__StyledImage-sc-5eewe7-1")
                 .getAttributes().getNamedItem("src").getTextContent();
 
-        return new Item(PHARMACY_NAME,itemName, price,itemUrl, imageUrl);
+        return new Item(PHARMACY_NAME, itemName, price, itemUrl, imageUrl);
     }
 
     private static Double convertPrice(String priceString) {

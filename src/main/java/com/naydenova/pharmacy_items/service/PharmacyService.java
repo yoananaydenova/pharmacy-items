@@ -4,7 +4,6 @@ import com.naydenova.pharmacy_items.Item;
 import org.htmlunit.BrowserVersion;
 import org.htmlunit.WebClient;
 import org.htmlunit.html.HtmlAnchor;
-import org.htmlunit.html.HtmlDivision;
 import org.htmlunit.html.HtmlElement;
 import org.htmlunit.html.HtmlPage;
 
@@ -23,13 +22,17 @@ public interface PharmacyService {
 
     Item createItem(HtmlElement divItem);
 
+    PharmacyService setLimit(long limit);
+
+    long getLimit();
 
     default List<Item> parseResults(HtmlPage resultPage, String itemXpath) {
 
-        final List<HtmlDivision> pageItems = resultPage.getByXPath(itemXpath);
-        return pageItems.stream().map(this::createItem).collect(Collectors.toList());
+        final List<HtmlElement> pageItems = resultPage.getByXPath(itemXpath);
+        final List<Item>  result= pageItems.stream().limit(getLimit()).map(this::createItem).collect(Collectors.toList());
+        setLimit(getLimit() - result.size());
+       return result;
     }
-
 
     default String getNextPageUrl(HtmlPage resultPage) {
 
@@ -71,7 +74,7 @@ public interface PharmacyService {
         do {
             allItems.addAll(parseResults(resultPage, getItemXpath()));
 
-            if (nextPageUrl == null) {
+            if (nextPageUrl == null || getLimit() == 0) {
                 break;
             }
 

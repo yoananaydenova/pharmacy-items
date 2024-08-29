@@ -1,6 +1,7 @@
 package com.naydenova.pharmacy_items.service.impl;
 
 import com.naydenova.pharmacy_items.Item;
+import com.naydenova.pharmacy_items.service.PharmacyService;
 import com.naydenova.pharmacy_items.service.SubraPharmacyService;
 import org.htmlunit.html.*;
 import org.springframework.stereotype.Service;
@@ -14,6 +15,8 @@ public class SubraPharmacyServiceImpl implements SubraPharmacyService {
 
     public static final String NEXT_PAGE_XPATH = "//a[@class='pagination__list-last']";
 
+
+    private long limit = 10;
     @Override
     public String getSearchDomainUrl() {
         return SEARCH_DOMAIN;
@@ -29,6 +32,16 @@ public class SubraPharmacyServiceImpl implements SubraPharmacyService {
         return NEXT_PAGE_XPATH;
     }
 
+    @Override
+    public PharmacyService setLimit(long limit) {
+        this.limit = limit;
+        return this;
+    }
+
+    @Override
+    public long getLimit() {
+        return this.limit;
+    }
 
     @Override
     public Item createItem(HtmlElement divItem) {

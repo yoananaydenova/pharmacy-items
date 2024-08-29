@@ -1,6 +1,7 @@
 package com.naydenova.pharmacy_items;
 
 import com.naydenova.pharmacy_items.service.PharmacyService;
+import com.naydenova.pharmacy_items.service.RemediumPharmacyService;
 import com.naydenova.pharmacy_items.service.SopharmacyPharmacyService;
 import com.naydenova.pharmacy_items.service.SubraPharmacyService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,18 +22,21 @@ public class PharmacyItemsController {
     private final SopharmacyPharmacyService sopharmacyPharmacyService;
     private final SubraPharmacyService subraPharmacyService;
 
+    private final RemediumPharmacyService remediumPharmacyService;
+
 
     @Autowired
-    public PharmacyItemsController(SopharmacyPharmacyService sopharmacyPharmacyService, SubraPharmacyService subraPharmacyService) {
+    public PharmacyItemsController(SopharmacyPharmacyService sopharmacyPharmacyService, SubraPharmacyService subraPharmacyService, RemediumPharmacyService remediumPharmacyService) {
         this.sopharmacyPharmacyService = sopharmacyPharmacyService;
         this.subraPharmacyService = subraPharmacyService;
+        this.remediumPharmacyService = remediumPharmacyService;
     }
 
 
     @GetMapping("/items")
-    private ResponseEntity<List<Item>> findAll(@RequestParam List<Integer> pharms, @RequestParam String text) {
+    private ResponseEntity<List<Item>> findAll(@RequestParam List<Integer> pharms, @RequestParam long limit,@RequestParam String text) {
         final List<Item> items = pharms.stream()
-                .map(pharmKey -> getService(pharmKey).parseItems(text)).flatMap(Collection::stream).collect(Collectors.toList());
+                .map(pharmKey -> getService(pharmKey).setLimit(limit).parseItems(text)).flatMap(Collection::stream).collect(Collectors.toList());
         return ResponseEntity.ok(items);
     }
 
@@ -41,6 +45,7 @@ public class PharmacyItemsController {
         return switch (pharmKey){
             case 1 ->sopharmacyPharmacyService;
             case 2 -> subraPharmacyService;
+            case 3 -> remediumPharmacyService;
             default -> throw new RuntimeException("This pharmacy is no supported!");
         };
 

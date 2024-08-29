@@ -1,6 +1,7 @@
 package com.naydenova.pharmacy_items.service.impl;
 
 import com.naydenova.pharmacy_items.Item;
+import com.naydenova.pharmacy_items.service.PharmacyService;
 import com.naydenova.pharmacy_items.service.SopharmacyPharmacyService;
 import org.htmlunit.html.*;
 import org.springframework.stereotype.Service;
@@ -13,6 +14,7 @@ public class SopharmacyPharmacyServiceImpl implements SopharmacyPharmacyService 
     private static final String ITEM_XPATH = "//div[@class='products-item ']";
     public static final String NEXT_PAGE_XPATH = "//a[@class='pagination__arrow']";
 
+    private long limit = 10;
 
     @Override
     public String getNextPageUrl(HtmlPage resultPage)  {
@@ -33,6 +35,17 @@ public class SopharmacyPharmacyServiceImpl implements SopharmacyPharmacyService 
     @Override
     public String getNextPageXpath() {
         return NEXT_PAGE_XPATH;
+    }
+
+    @Override
+    public PharmacyService setLimit(long limit) {
+        this.limit = limit;
+        return this;
+    }
+
+    @Override
+    public long getLimit() {
+        return this.limit;
     }
 
     @Override
