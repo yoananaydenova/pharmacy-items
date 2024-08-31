@@ -14,6 +14,7 @@ import java.util.stream.Collectors;
 
 public interface PharmacyService {
 
+    long DEFAULT_LIMIT = 1L;
     String getSearchDomainUrl();
 
     String getItemXpath();

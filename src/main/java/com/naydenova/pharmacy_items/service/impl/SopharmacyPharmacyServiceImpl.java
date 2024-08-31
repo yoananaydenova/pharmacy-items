@@ -15,7 +15,7 @@ public class SopharmacyPharmacyServiceImpl implements SopharmacyPharmacyService 
     private static final String ITEM_XPATH = "//div[@class='products-item ']";
     public static final String NEXT_PAGE_XPATH = "//a[@class='pagination__arrow']";
 
-    private long limit = 10;
+    private long limit = DEFAULT_LIMIT;
 
     @Override
     public String getNextPageUrl(HtmlPage resultPage)  {

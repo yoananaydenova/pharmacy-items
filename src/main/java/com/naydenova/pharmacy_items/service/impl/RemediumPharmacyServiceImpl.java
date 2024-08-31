@@ -16,7 +16,7 @@ public class RemediumPharmacyServiceImpl implements RemediumPharmacyService {
     private static final String ITEM_XPATH = "//a[@class='LineItem__ItemLinkWrapper-sc-1imtm0n-0 gRUunT']";
     public static final String NEXT_PAGE_XPATH = "//a[@aria-label='Next page']";
 
-    private long limit = 10;
+    private long limit = DEFAULT_LIMIT;
 
     @Override
     public String getNextPageUrl(HtmlPage resultPage) {

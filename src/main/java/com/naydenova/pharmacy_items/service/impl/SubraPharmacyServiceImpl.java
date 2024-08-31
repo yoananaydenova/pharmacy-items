@@ -19,7 +19,7 @@ public class SubraPharmacyServiceImpl implements SubraPharmacyService {
     public static final String NEXT_PAGE_XPATH = "//a[@class='button pagination__list-last center-arrow']";
 
 
-    private long limit = 10;
+    private long limit = DEFAULT_LIMIT;
 
     @Override
     public String getSearchDomainUrl() {
