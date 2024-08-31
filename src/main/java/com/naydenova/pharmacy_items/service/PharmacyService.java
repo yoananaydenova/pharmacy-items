@@ -56,7 +56,7 @@ public interface PharmacyService {
             webClient.getOptions().setJavaScriptEnabled(false);
             webClient.getOptions().setCssEnabled(false);
 
-            final HtmlPage resultPage = webClient.getPage(getSearchDomainUrl() + itemName);
+            final HtmlPage resultPage = webClient.getPage(String.format(getSearchDomainUrl(), itemName));
 
             return extractAllItems(webClient, resultPage);
 

@@ -5,11 +5,12 @@ import com.naydenova.pharmacy_items.service.PharmacyService;
 import com.naydenova.pharmacy_items.service.SopharmacyPharmacyService;
 import org.htmlunit.html.*;
 import org.springframework.stereotype.Service;
+import org.w3c.dom.Node;
 
 @Service
 public class SopharmacyPharmacyServiceImpl implements SopharmacyPharmacyService {
 
-    public static final String SEARCH_DOMAIN = "https://sopharmacy.bg/bg/sophSearch/?text=";
+    public static final String SEARCH_DOMAIN = "https://sopharmacy.bg/bg/sophSearch/?from=&to=&q=%s:promoPrice-asc&sort=promoPrice-asc&pageselect=96";
     private static final String PHARMACY_NAME = "SOpharmacy";
     private static final String ITEM_XPATH = "//div[@class='products-item ']";
     public static final String NEXT_PAGE_XPATH = "//a[@class='pagination__arrow']";
@@ -58,8 +59,9 @@ public class SopharmacyPharmacyServiceImpl implements SopharmacyPharmacyService 
         final String itemUrlString = divItem.querySelector("a").getAttributes().getNamedItem("href").getTextContent();
         final String itemUrl = "https://sopharmacy.bg" + itemUrlString;
 
-        final String imageUrlString = divItem.querySelector("img").getAttributes().getNamedItem("data-srcset").getTextContent();
-        final String imageUrl = "https://sopharmacy.bg" + imageUrlString;
+        final Node imgNode = divItem.querySelector("img").getAttributes().getNamedItem("data-srcset");
+        final String imageUrl = imgNode == null? null :"https://sopharmacy.bg" + imgNode.getTextContent();
+
 
         return new Item(PHARMACY_NAME,itemName, price,itemUrl, imageUrl);
     }
