@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -36,7 +37,12 @@ public class PharmacyItemsController {
     @GetMapping("/items")
     private ResponseEntity<List<Item>> findAll(@RequestParam List<Integer> pharms, @RequestParam long limit,@RequestParam String text) {
         final List<Item> items = pharms.stream()
-                .map(pharmKey -> getService(pharmKey).setLimit(limit).parseItems(text)).flatMap(Collection::stream).collect(Collectors.toList());
+                .map(pharmKey -> getService(pharmKey)
+                        .setLimit(limit).parseItems(text))
+                .flatMap(Collection::stream)
+                .sorted(Comparator.comparing(Item::price, Comparator.nullsLast(Comparator.naturalOrder())))
+                .collect(Collectors.toList());
+
         return ResponseEntity.ok(items);
     }
 
