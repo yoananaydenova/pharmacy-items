@@ -36,7 +36,7 @@ public class PharmacyItemsController {
 
     @GetMapping("/items")
     private ResponseEntity<List<Item>> findAll(@RequestParam List<Integer> pharms, @RequestParam long limit,@RequestParam String text) {
-        final List<Item> items = pharms.stream()
+        final List<Item> items = pharms.parallelStream()
                 .map(pharmKey -> getService(pharmKey)
                         .setLimit(limit).parseItems(text))
                 .flatMap(Collection::stream)
