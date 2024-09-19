@@ -1,8 +1,8 @@
-package com.naydenova.pharmacy_items.service.impl;
+package com.naydenova.pharmacy_items.services.impl;
 
-import com.naydenova.pharmacy_items.Item;
-import com.naydenova.pharmacy_items.service.PharmacyService;
-import com.naydenova.pharmacy_items.service.SopharmacyPharmacyService;
+import com.naydenova.pharmacy_items.dtos.ItemDto;
+import com.naydenova.pharmacy_items.services.PharmacyService;
+import com.naydenova.pharmacy_items.services.SopharmacyPharmacyService;
 import org.htmlunit.html.*;
 import org.springframework.stereotype.Service;
 import org.w3c.dom.Node;
@@ -50,7 +50,7 @@ public class SopharmacyPharmacyServiceImpl implements SopharmacyPharmacyService 
     }
 
     @Override
-    public Item createItem(HtmlElement divItem) {
+    public ItemDto createItem(HtmlElement divItem) {
         final String itemName = divItem.querySelector("h2").getTextContent().trim();
 
         final String priceString = divItem.querySelector("strong.price--s").getTextContent().trim();
@@ -63,7 +63,7 @@ public class SopharmacyPharmacyServiceImpl implements SopharmacyPharmacyService 
         final String imageUrl = imgNode == null? null :"https://sopharmacy.bg" + imgNode.getTextContent();
 
 
-        return new Item(PHARMACY_NAME,itemName, price,itemUrl, imageUrl);
+        return new ItemDto(PHARMACY_NAME,itemName, price,itemUrl, imageUrl);
     }
 
    private static Double convertPrice(String priceString) {

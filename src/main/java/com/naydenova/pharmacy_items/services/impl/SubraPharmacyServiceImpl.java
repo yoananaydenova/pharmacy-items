@@ -1,8 +1,8 @@
-package com.naydenova.pharmacy_items.service.impl;
+package com.naydenova.pharmacy_items.services.impl;
 
-import com.naydenova.pharmacy_items.Item;
-import com.naydenova.pharmacy_items.service.PharmacyService;
-import com.naydenova.pharmacy_items.service.SubraPharmacyService;
+import com.naydenova.pharmacy_items.dtos.ItemDto;
+import com.naydenova.pharmacy_items.services.PharmacyService;
+import com.naydenova.pharmacy_items.services.SubraPharmacyService;
 import org.htmlunit.html.*;
 import org.springframework.stereotype.Service;
 
@@ -48,7 +48,7 @@ public class SubraPharmacyServiceImpl implements SubraPharmacyService {
     }
 
     @Override
-    public Item createItem(HtmlElement divItem) {
+    public ItemDto createItem(HtmlElement divItem) {
         final String itemName = divItem.querySelector("a.product-card__text-link").getTextContent().trim();
 
         final String priceString = divItem.querySelector("div.product-card__price").getTextContent().trim();
@@ -59,12 +59,13 @@ public class SubraPharmacyServiceImpl implements SubraPharmacyService {
                 divItem.querySelector("span.product-card__price-value").getTextContent().trim()
         );
 
+
         final String itemUrl = divItem.querySelector("a.product-card__text-link").getAttributes().getNamedItem("href").getTextContent();
 
         final String imageUrlString = divItem.querySelector("img").getAttributes().getNamedItem("data-src").getTextContent();
         final String imageUrl = "https://subra.bg/" + imageUrlString;
 
-        return new Item(PHARMACY_NAME, itemName, price, itemUrl, imageUrl);
+        return new ItemDto(PHARMACY_NAME, itemName, price, itemUrl, imageUrl);
     }
 
     private static Double convertPrice(String priceString) {

@@ -1,6 +1,6 @@
-package com.naydenova.pharmacy_items.service;
+package com.naydenova.pharmacy_items.services;
 
-import com.naydenova.pharmacy_items.Item;
+import com.naydenova.pharmacy_items.dtos.ItemDto;
 import org.htmlunit.BrowserVersion;
 import org.htmlunit.WebClient;
 import org.htmlunit.html.HtmlAnchor;
@@ -22,16 +22,16 @@ public interface PharmacyService {
 
     String getNextPageXpath();
 
-    Item createItem(HtmlElement divItem);
+    ItemDto createItem(HtmlElement divItem);
 
     PharmacyService setLimit(long limit);
 
     long getLimit();
 
-    default List<Item> parseResults(HtmlPage resultPage, String itemXpath) {
+    default List<ItemDto> parseResults(HtmlPage resultPage, String itemXpath) {
 
         final List<HtmlElement> pageItems = resultPage.getByXPath(itemXpath);
-        final List<Item> result = pageItems.parallelStream().limit(getLimit()).map(this::createItem).collect(Collectors.toList());
+        final List<ItemDto> result = pageItems.parallelStream().limit(getLimit()).map(this::createItem).collect(Collectors.toList());
         setLimit(getLimit() - result.size());
         return result;
     }
@@ -52,7 +52,7 @@ public interface PharmacyService {
     }
 
 
-    default List<Item> parseItems(String itemName) {
+    default List<ItemDto> parseItems(String itemName) {
 
         try (WebClient webClient = new WebClient(BrowserVersion.CHROME)) {
             webClient.getOptions().setJavaScriptEnabled(false);
@@ -60,18 +60,18 @@ public interface PharmacyService {
 
             final HtmlPage resultPage = webClient.getPage(String.format(getSearchDomainUrl(), itemName));
 
-            return extractAllItems(webClient, resultPage);
+     return extractAllItems(webClient, resultPage);
 
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
-    default List<Item> extractAllItems(WebClient client, HtmlPage resultPage) throws IOException {
+    default List<ItemDto> extractAllItems(WebClient client, HtmlPage resultPage) throws IOException {
 
         String nextPageUrl = getNextPageUrl(resultPage);
 
-        final List<Item> allItems = new LinkedList<>();
+        final List<ItemDto> allItems = new LinkedList<>();
 
         do {
             allItems.addAll(parseResults(resultPage, getItemXpath()));

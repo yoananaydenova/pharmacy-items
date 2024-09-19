@@ -1,8 +1,8 @@
-package com.naydenova.pharmacy_items.service.impl;
+package com.naydenova.pharmacy_items.services.impl;
 
-import com.naydenova.pharmacy_items.Item;
-import com.naydenova.pharmacy_items.service.PharmacyService;
-import com.naydenova.pharmacy_items.service.RemediumPharmacyService;
+import com.naydenova.pharmacy_items.dtos.ItemDto;
+import com.naydenova.pharmacy_items.services.PharmacyService;
+import com.naydenova.pharmacy_items.services.RemediumPharmacyService;
 import org.htmlunit.html.HtmlElement;
 import org.htmlunit.html.HtmlPage;
 import org.springframework.stereotype.Service;
@@ -52,7 +52,7 @@ public class RemediumPharmacyServiceImpl implements RemediumPharmacyService {
 
 
     @Override
-    public Item createItem(HtmlElement divItem) {
+    public ItemDto createItem(HtmlElement divItem) {
         final String itemName = divItem.querySelector("p.LineItem__ItemName-sc-1imtm0n-3").getTextContent().trim();
 
         HtmlElement priceElement = divItem.querySelector("div.Price__RegularPrice-sc-14hy5o8-2");
@@ -68,7 +68,7 @@ public class RemediumPharmacyServiceImpl implements RemediumPharmacyService {
         final String imageUrl = divItem.querySelector("img.LazyResponsiveImage__StyledImage-sc-5eewe7-1")
                 .getAttributes().getNamedItem("src").getTextContent();
 
-        return new Item(PHARMACY_NAME, itemName, price, itemUrl, imageUrl);
+        return new ItemDto(PHARMACY_NAME, itemName, price, itemUrl, imageUrl);
     }
 
     private static Double convertPrice(String priceString) {
