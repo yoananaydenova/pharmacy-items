@@ -6,7 +6,6 @@ import jakarta.validation.constraints.Size;
 import org.springframework.http.HttpStatus;
 
 import java.util.HashSet;
-import java.util.Objects;
 import java.util.Set;
 
 @Entity
@@ -38,6 +37,10 @@ public class User {
     @JoinTable(name = "app_user_item_mapping", joinColumns = @JoinColumn(name = "app_user_id"),
             inverseJoinColumns = @JoinColumn(name = "item_id"))
     private Set<Item> favorites = new HashSet<>();
+
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", referencedColumnName = "id")
+    private Set<Search> searches = new HashSet<>();
 
     public User() {
     }
@@ -90,14 +93,26 @@ public class User {
         this.favorites = favorites;
     }
 
-    public boolean addItemToFavorites(Item item) {
+    public Set<Search> getSearches() {
+        return searches;
+    }
+
+    public void setSearches(Set<Search> searches) {
+        this.searches = searches;
+    }
+
+    public boolean addToFavorites(Item item) {
         return this.favorites.add(item);
+    }
+
+    public boolean addToSearches(Search search) {
+        return this.searches.add(search);
     }
 
     public void removeItemFromFavorites(Long id) {
         final Item itemToDelete = this.favorites.stream().filter(item -> item.getId().equals(id))
                 .findAny()
-                .orElseThrow(() -> new AppException("The item isn't present in favorite collection!", HttpStatus.NOT_FOUND));
+                .orElseThrow(() -> new AppException("The search isn't present in favorite collection!", HttpStatus.NOT_FOUND));
         this.favorites.remove(itemToDelete);
     }
 }
