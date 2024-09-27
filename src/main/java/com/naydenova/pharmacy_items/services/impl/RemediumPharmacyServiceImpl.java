@@ -16,7 +16,7 @@ public class RemediumPharmacyServiceImpl implements RemediumPharmacyService {
     private static final String ITEM_XPATH = "//a[@class='LineItem__ItemLinkWrapper-sc-1imtm0n-0 gRUunT']";
     public static final String NEXT_PAGE_XPATH = "//a[@aria-label='Next page']";
 
-    private long limit = DEFAULT_LIMIT;
+    private int limit = DEFAULT_LIMIT;
 
     @Override
     public String getNextPageUrl(HtmlPage resultPage) {
@@ -40,13 +40,13 @@ public class RemediumPharmacyServiceImpl implements RemediumPharmacyService {
     }
 
     @Override
-    public PharmacyService setLimit(long limit) {
+    public PharmacyService setLimit(int limit) {
         this.limit = limit;
         return this;
     }
 
     @Override
-    public long getLimit() {
+    public int getLimit() {
         return this.limit;
     }
 

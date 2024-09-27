@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 
 public interface PharmacyService {
 
-    long DEFAULT_LIMIT = 1L;
+    int DEFAULT_LIMIT = 1;
 
     String getSearchDomainUrl();
 
@@ -24,9 +24,9 @@ public interface PharmacyService {
 
     ItemDto createItem(HtmlElement divItem);
 
-    PharmacyService setLimit(long limit);
+    PharmacyService setLimit(int limit);
 
-    long getLimit();
+    int getLimit();
 
     default List<ItemDto> parseResults(HtmlPage resultPage, String itemXpath) {
 

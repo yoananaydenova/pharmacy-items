@@ -15,7 +15,7 @@ public class SopharmacyPharmacyServiceImpl implements SopharmacyPharmacyService 
     private static final String ITEM_XPATH = "//div[@class='products-item ']";
     public static final String NEXT_PAGE_XPATH = "//a[@class='pagination__arrow']";
 
-    private long limit = DEFAULT_LIMIT;
+    private int limit = DEFAULT_LIMIT;
 
     @Override
     public String getNextPageUrl(HtmlPage resultPage)  {
@@ -39,13 +39,13 @@ public class SopharmacyPharmacyServiceImpl implements SopharmacyPharmacyService 
     }
 
     @Override
-    public PharmacyService setLimit(long limit) {
+    public PharmacyService setLimit(int limit) {
         this.limit = limit;
         return this;
     }
 
     @Override
-    public long getLimit() {
+    public int getLimit() {
         return this.limit;
     }
 
