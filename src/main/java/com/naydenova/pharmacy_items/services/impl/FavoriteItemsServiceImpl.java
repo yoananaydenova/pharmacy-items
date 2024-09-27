@@ -19,7 +19,6 @@ import java.util.stream.Collectors;
 @Service
 public class FavoriteItemsServiceImpl implements FavoriteItemsService {
     private final UserRepository userRepository;
-
     private final ItemRepository itemRepository;
     private final ItemMapper itemMapper;
 
@@ -34,9 +33,7 @@ public class FavoriteItemsServiceImpl implements FavoriteItemsService {
     public List<ItemDto> findAllByUsername(String username) {
 
         final User user = userRepository.findByLogin(username)
-                .orElseThrow(() -> {
-                    return new AppException("Unknown user", HttpStatus.NOT_FOUND);
-                });
+                .orElseThrow(() ->  new AppException("Unknown user", HttpStatus.NOT_FOUND));
         return user.getFavorites().stream().map(itemMapper::toItemDto).collect(Collectors.toList());
     }
 
@@ -46,9 +43,9 @@ public class FavoriteItemsServiceImpl implements FavoriteItemsService {
                 .orElseThrow(() ->  new AppException("Unknown user", HttpStatus.NOT_FOUND));
 
          final Optional< Item> result = itemRepository.findByItemUrl(newItem.getItemUrl());
-         final Item item = result.orElseGet(() -> createItem(newItem));
+         final Item item = result.orElseGet(() -> saveItem(newItem));
 
-        user.addItemToFavorites(item);
+        user.addToFavorites(item);
         userRepository.save(user);
         return itemMapper.toItemDto(item);
     }
@@ -67,7 +64,7 @@ public class FavoriteItemsServiceImpl implements FavoriteItemsService {
                Item with id %s has been successfully deleted!""".formatted(id);
     }
 
-    private Item createItem(ItemDto newItem) {
+    private Item saveItem(ItemDto newItem) {
         return itemRepository.save(new Item(newItem.getPharmacyName(),
                 newItem.getItemName(), newItem.getPrice(), newItem.getItemUrl(), newItem.getImageUrl()));
 
