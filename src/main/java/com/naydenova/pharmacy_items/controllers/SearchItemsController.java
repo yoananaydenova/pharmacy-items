@@ -1,24 +1,27 @@
 package com.naydenova.pharmacy_items.controllers;
 
 import com.naydenova.pharmacy_items.dtos.ItemDto;
+import com.naydenova.pharmacy_items.entities.PharmacyName;
+import com.naydenova.pharmacy_items.exceptions.AppException;
 import com.naydenova.pharmacy_items.services.PharmacyService;
 import com.naydenova.pharmacy_items.services.RemediumPharmacyService;
 import com.naydenova.pharmacy_items.services.SopharmacyPharmacyService;
 import com.naydenova.pharmacy_items.services.SubraPharmacyService;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @RestController
 //@CrossOrigin(origins = "http://localhost:5173")
-public class PharmacyItemsController {
+public class SearchItemsController {
 
     private final SopharmacyPharmacyService sopharmacyPharmacyService;
     private final SubraPharmacyService subraPharmacyService;
@@ -26,14 +29,18 @@ public class PharmacyItemsController {
 
 
     @Autowired
-    public PharmacyItemsController(SopharmacyPharmacyService sopharmacyPharmacyService, SubraPharmacyService subraPharmacyService, RemediumPharmacyService remediumPharmacyService) {
+    public SearchItemsController(SopharmacyPharmacyService sopharmacyPharmacyService, SubraPharmacyService subraPharmacyService, RemediumPharmacyService remediumPharmacyService) {
         this.sopharmacyPharmacyService = sopharmacyPharmacyService;
         this.subraPharmacyService = subraPharmacyService;
         this.remediumPharmacyService = remediumPharmacyService;
     }
 
     @GetMapping("/search")
-    private ResponseEntity<List<ItemDto>> findAll(@RequestParam List<Integer> pharms, @RequestParam long limit, @RequestParam String text) {
+    private ResponseEntity<List<ItemDto>> findAll(@RequestParam List<String> pharms, @RequestParam @Min(1) int limit, @RequestParam @NotBlank String text) {
+        if (pharms == null || pharms.isEmpty()) {
+            throw new AppException("The pharmacy list must have at lest 1 item!", HttpStatus.BAD_REQUEST);
+        }
+
         final List<ItemDto> items = pharms.parallelStream()
                 .map(pharmKey -> getService(pharmKey)
                         .setLimit(limit).parseItems(text))
@@ -44,15 +51,27 @@ public class PharmacyItemsController {
         return ResponseEntity.ok(items);
     }
 
-    private PharmacyService getService(Integer pharmKey) {
-        return switch (pharmKey) {
-            case 1 -> sopharmacyPharmacyService;
-            case 2 -> subraPharmacyService;
-            case 3 -> remediumPharmacyService;
-            default -> throw new RuntimeException("This pharmacy is no supported!");
-        };
+    private PharmacyService getService(String pharmKey) {
 
+        if (pharmKey.isBlank()) {
+            throw new AppException("The pharmacy name must be present!", HttpStatus.BAD_REQUEST);
+        }
+
+        final PharmacyName pharmacyName = getPharmacyName(pharmKey);
+
+        return switch (pharmacyName) {
+            case SOPHARMACY -> sopharmacyPharmacyService;
+            case SUBRA -> subraPharmacyService;
+            case REMEDIUM -> remediumPharmacyService;
+        };
     }
 
+    private static PharmacyName getPharmacyName(String pharmKey) {
+        try {
+            return PharmacyName.valueOf(pharmKey.trim().toUpperCase());
+        } catch (NoSuchElementException ex) {
+            throw new AppException("This pharmacy name is not supported!", HttpStatus.BAD_REQUEST);
+        }
+    }
 
 }

@@ -3,23 +3,22 @@ package com.naydenova.pharmacy_items.controllers;
 import com.naydenova.pharmacy_items.dtos.ItemDto;
 import com.naydenova.pharmacy_items.dtos.UserDto;
 import com.naydenova.pharmacy_items.services.FavoriteItemsService;
+import jakarta.validation.constraints.Min;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.util.UriComponentsBuilder;
 
-import java.net.URI;
 import java.util.List;
 
 @RestController
 @RequestMapping("/favorites")
-public class FavoritesController {
+public class FavoriteItemsController {
 
     private final FavoriteItemsService favoriteItemsService;
 
     @Autowired
-    public FavoritesController(FavoriteItemsService favoriteItemsService) {
+    public FavoriteItemsController(FavoriteItemsService favoriteItemsService) {
         this.favoriteItemsService = favoriteItemsService;
     }
 
@@ -43,7 +42,7 @@ public class FavoritesController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteFavorite(@PathVariable Long id, UsernamePasswordAuthenticationToken token) {
+    public ResponseEntity<String> deleteFavorite(@PathVariable @Min(1) Long id, UsernamePasswordAuthenticationToken token) {
 
         final UserDto user = (UserDto)token.getPrincipal();
         final String username =  user.getLogin();
