@@ -109,6 +109,13 @@ public class User {
         return this.searches.add(search);
     }
 
+    public void removeSearch(Long id) {
+        final Search searchToDelete = this.searches.stream().filter(search -> search.getId().equals(id))
+                .findAny()
+                .orElseThrow(() -> new AppException("The search isn't present in favorite collection!", HttpStatus.NOT_FOUND));
+        this.favorites.remove(searchToDelete);
+    }
+
     public void removeItemFromFavorites(Long id) {
         final Item itemToDelete = this.favorites.stream().filter(item -> item.getId().equals(id))
                 .findAny()
