@@ -61,7 +61,7 @@ public class FavoriteItemsServiceImpl implements FavoriteItemsService {
         userRepository.save(user);
 
         return """
-               Item with id %s has been successfully deleted!""".formatted(id);
+               The item with id %s has been successfully deleted!""".formatted(id);
     }
 
     private Item saveItem(ItemDto newItem) {

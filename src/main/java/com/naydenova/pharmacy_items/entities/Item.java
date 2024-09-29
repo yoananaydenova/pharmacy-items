@@ -30,9 +30,6 @@ public class Item {
     @Column
     private String imageUrl;
 
-    //    @ManyToMany(fetch = FetchType.LAZY)
-//    @JoinTable(name = "app_user_item_mapping", joinColumns = @JoinColumn(name = "item_id"),
-//            inverseJoinColumns = @JoinColumn(name = "app_user_id"))
     @ManyToMany(mappedBy = "favorites")
     private Set<User> users = new HashSet<>();
 
