@@ -1,6 +1,7 @@
 package com.naydenova.pharmacy_items.services.impl;
 
 import com.naydenova.pharmacy_items.dtos.SearchDto;
+import com.naydenova.pharmacy_items.entities.PharmacyName;
 import com.naydenova.pharmacy_items.entities.Search;
 import com.naydenova.pharmacy_items.entities.User;
 import com.naydenova.pharmacy_items.exceptions.AppException;
@@ -63,6 +64,8 @@ public class FavoriteSearchesServiceImpl implements FavoriteSearchesService {
     }
 
     private Search saveSearch(SearchDto searchDto) {
-        return searchRepository.save(searchMapper.toSearch(searchDto));
+        final List<PharmacyName> pharmacies = searchDto.getPharmacies().stream().map(PharmacyName::getPharmacyByName).collect(Collectors.toList());
+        Search search = new Search(searchDto.getSearchedText(), pharmacies, searchDto.getSearchLimit());
+        return searchRepository.save(search);
     }
 }

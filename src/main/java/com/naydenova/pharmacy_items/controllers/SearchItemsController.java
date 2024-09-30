@@ -57,7 +57,7 @@ public class SearchItemsController {
             throw new AppException("The pharmacy name must be present!", HttpStatus.BAD_REQUEST);
         }
 
-        final PharmacyName pharmacyName = getPharmacyName(pharmKey);
+        final PharmacyName pharmacyName = PharmacyName.getPharmacyByName(pharmKey);
 
         return switch (pharmacyName) {
             case SOPHARMACY -> sopharmacyPharmacyService;
@@ -66,12 +66,6 @@ public class SearchItemsController {
         };
     }
 
-    private static PharmacyName getPharmacyName(String pharmKey) {
-        try {
-            return PharmacyName.valueOf(pharmKey.trim().toUpperCase());
-        } catch (NoSuchElementException ex) {
-            throw new AppException("This pharmacy name is not supported!", HttpStatus.BAD_REQUEST);
-        }
-    }
+
 
 }
