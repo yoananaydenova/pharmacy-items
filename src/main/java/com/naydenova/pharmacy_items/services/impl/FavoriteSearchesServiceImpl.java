@@ -10,6 +10,7 @@ import com.naydenova.pharmacy_items.repositories.SearchRepository;
 import com.naydenova.pharmacy_items.repositories.UserRepository;
 import com.naydenova.pharmacy_items.services.FavoriteSearchesService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -34,7 +35,7 @@ public class FavoriteSearchesServiceImpl implements FavoriteSearchesService {
     @Override
     public SearchDto saveSearchAsFavorite(SearchDto newFavoriteSearchDto, String username) {
         final User user = userRepository.findByLogin(username)
-                .orElseThrow(() ->  new AppException("Unknown user", HttpStatus.NOT_FOUND));
+                .orElseThrow(() -> new AppException("Unknown user", HttpStatus.NOT_FOUND));
 
         final Search savedSearch = saveSearch(newFavoriteSearchDto);
 
@@ -46,26 +47,31 @@ public class FavoriteSearchesServiceImpl implements FavoriteSearchesService {
     @Override
     public List<SearchDto> findAllByUsername(String username) {
         final User user = userRepository.findByLogin(username)
-                .orElseThrow(() ->  new AppException("Unknown user", HttpStatus.NOT_FOUND));
+                .orElseThrow(() -> new AppException("Unknown user", HttpStatus.NOT_FOUND));
         return user.getSearches().stream().map(searchMapper::toSearchDto).collect(Collectors.toList());
     }
 
     @Override
     public String deleteSearch(Long id, String username) {
         final User user = userRepository.findByLogin(username)
-                .orElseThrow(() ->  new AppException("Unknown user", HttpStatus.NOT_FOUND));
+                .orElseThrow(() -> new AppException("Unknown user", HttpStatus.NOT_FOUND));
 
         user.removeSearch(id);
 
         userRepository.save(user);
 
         return """
-               The search with id %s has been successfully deleted!""".formatted(id);
+                The search with id %s has been successfully deleted!""".formatted(id);
     }
 
     private Search saveSearch(SearchDto searchDto) {
         final List<PharmacyName> pharmacies = searchDto.getPharmacies().stream().map(PharmacyName::getPharmacyByName).collect(Collectors.toList());
-        Search search = new Search(searchDto.getSearchedText(), pharmacies, searchDto.getSearchLimit());
-        return searchRepository.save(search);
+        final Search search = new Search(searchDto.getSearchedText(), pharmacies, searchDto.getSearchLimit());
+
+        try {
+            return searchRepository.save(search);
+        } catch (DataIntegrityViolationException ex) {
+            throw new AppException("This search is already saved!", HttpStatus.BAD_REQUEST);
+        }
     }
 }
