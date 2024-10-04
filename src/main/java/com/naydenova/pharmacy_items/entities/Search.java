@@ -5,7 +5,10 @@ import jakarta.persistence.*;
 import java.util.List;
 
 @Entity
-@Table(name = "search")
+@Table(name = "search",
+        uniqueConstraints = { @UniqueConstraint(
+                name = "UniqueTextPharmaciesLimit",
+                columnNames = { "searchedText", "pharmacies","searchLimit" }) })
 public class Search {
 
     @Id
