@@ -7,13 +7,15 @@ import org.htmlunit.html.HtmlElement;
 import org.htmlunit.html.HtmlPage;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 
 @Service
 public class RemediumPharmacyServiceImpl implements RemediumPharmacyService {
 
-    public static final String SEARCH_DOMAIN = "https://remedium.bg/search?q=%s&sort=price-asc&#";
+    public static final String SEARCH_DOMAIN = "https://remedium.bg/search?q=%s";
     private static final String PHARMACY_NAME = "Remedium";
-    private static final String ITEM_XPATH = "//a[@class='LineItem__ItemLinkWrapper-sc-1imtm0n-0 gRUunT']";
+    private static final List<String> ITEM_XPATHS = List.of("//a[@class='LineItem__ItemLinkWrapper-sc-1imtm0n-0 gRUunT']");
     public static final String NEXT_PAGE_XPATH = "//a[@aria-label='Next page']";
 
     private int limit = DEFAULT_LIMIT;
@@ -30,8 +32,8 @@ public class RemediumPharmacyServiceImpl implements RemediumPharmacyService {
     }
 
     @Override
-    public String getItemXpath() {
-        return ITEM_XPATH;
+    public List<String> getItemXpaths() {
+        return ITEM_XPATHS;
     }
 
     @Override

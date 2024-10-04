@@ -7,12 +7,14 @@ import org.htmlunit.html.*;
 import org.springframework.stereotype.Service;
 import org.w3c.dom.Node;
 
+import java.util.List;
+
 @Service
 public class SopharmacyPharmacyServiceImpl implements SopharmacyPharmacyService {
 
-    public static final String SEARCH_DOMAIN = "https://sopharmacy.bg/bg/sophSearch/?from=&to=&q=%s:promoPrice-asc&sort=promoPrice-asc&pageselect=96";
+    public static final String SEARCH_DOMAIN = "https://sopharmacy.bg/bg/sophSearch/?text=%s";
     private static final String PHARMACY_NAME = "SOpharmacy";
-    private static final String ITEM_XPATH = "//div[@class='products-item ']";
+    private static final List<String> ITEM_XPATHS = List.of("//div[@class='products-item discount']", "//div[@class='products-item ']");
     public static final String NEXT_PAGE_XPATH = "//a[@class='pagination__arrow']";
 
     private int limit = DEFAULT_LIMIT;
@@ -29,8 +31,8 @@ public class SopharmacyPharmacyServiceImpl implements SopharmacyPharmacyService 
     }
 
     @Override
-    public String getItemXpath() {
-        return ITEM_XPATH;
+    public List<String> getItemXpaths() {
+        return ITEM_XPATHS;
     }
 
     @Override

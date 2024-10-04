@@ -18,7 +18,7 @@ public interface PharmacyService {
 
     String getSearchDomainUrl();
 
-    String getItemXpath();
+    List<String> getItemXpaths();
 
     String getNextPageXpath();
 
@@ -28,9 +28,16 @@ public interface PharmacyService {
 
     int getLimit();
 
-    default List<ItemDto> parseResults(HtmlPage resultPage, String itemXpath) {
+    default List<ItemDto> parseResults(HtmlPage resultPage, List<String> itemXpaths) {
 
-        final List<HtmlElement> pageItems = resultPage.getByXPath(itemXpath);
+        final List<HtmlElement> pageItems = itemXpaths.stream()
+                .map(resultPage::getByXPath)
+                .flatMap(Collection::stream)
+                .filter(c -> c instanceof HtmlElement)
+                .map(c -> (HtmlElement) c)
+                .toList();
+
+//        List<Object> byXPath = resultPage.getByXPath("");
         final List<ItemDto> result = pageItems.parallelStream().limit(getLimit()).map(this::createItem).collect(Collectors.toList());
         setLimit(getLimit() - result.size());
         return result;
@@ -74,7 +81,9 @@ public interface PharmacyService {
         final List<ItemDto> allItems = new LinkedList<>();
 
         do {
-            allItems.addAll(parseResults(resultPage, getItemXpath()));
+
+
+            allItems.addAll(parseResults(resultPage, getItemXpaths()));
 
             if (nextPageUrl == null || getLimit() == 0) {
                 break;

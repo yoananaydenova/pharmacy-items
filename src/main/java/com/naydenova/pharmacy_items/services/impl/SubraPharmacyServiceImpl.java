@@ -13,8 +13,8 @@ public class SubraPharmacyServiceImpl implements SubraPharmacyService {
 
     private static final List<String> OTHER_PRICE_STATUS = List.of("Изчерпан", "Очаква доставка");
     private static final String PHARMACY_NAME = "Subra";
-    public static final String SEARCH_DOMAIN = "https://subra.bg/bg/-base-/5/1?search=%s&sort=price_asc";
-    public static final String ITEM_XPATH = "//div[@class='product-card product-block product-block_backend']";
+    public static final String SEARCH_DOMAIN = "https://subra.bg/bg/-base-/5/1?search=%s";
+    public static final List<String> ITEM_XPATHS = List.of("//div[@class='product-card product-block product-block_backend']");
 
     public static final String NEXT_PAGE_XPATH = "//a[@class='button pagination__list-last center-arrow']";
 
@@ -27,8 +27,8 @@ public class SubraPharmacyServiceImpl implements SubraPharmacyService {
     }
 
     @Override
-    public String getItemXpath() {
-        return ITEM_XPATH;
+    public List<String> getItemXpaths() {
+        return ITEM_XPATHS;
     }
 
     @Override
