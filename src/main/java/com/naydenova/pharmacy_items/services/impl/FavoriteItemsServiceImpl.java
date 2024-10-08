@@ -56,12 +56,13 @@ public class FavoriteItemsServiceImpl implements FavoriteItemsService {
         final User user = userRepository.findByLogin(username)
                 .orElseThrow(() ->  new AppException("Unknown user", HttpStatus.NOT_FOUND));
 
-        user.removeItemFromFavorites(id);
+        final Item favoriteItemById = user.findFavoriteItemById(id);
+        user.removeItemFromFavorites(favoriteItemById);
 
         userRepository.save(user);
 
         return """
-               The item with id %s has been successfully deleted!""".formatted(id);
+               The item %s has been successfully deleted!""".formatted(favoriteItemById.getItemName());
     }
 
     private Item saveItem(ItemDto newItem) {
