@@ -7,5 +7,4 @@ import org.mapstruct.Mapper;
 @Mapper(componentModel = "spring")
 public interface SearchMapper {
     SearchDto toSearchDto(Search search);
-    Search toSearch(SearchDto search);
 }

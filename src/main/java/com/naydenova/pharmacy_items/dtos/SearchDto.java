@@ -4,6 +4,7 @@ import java.util.List;
 
 public class SearchDto {
 
+    private Long id;
     private String searchedText;
     private List<String> pharmacies;
     private int searchLimit;
@@ -11,10 +12,12 @@ public class SearchDto {
     public SearchDto() {
     }
 
-    public SearchDto(String searchedText, List<String> pharmacies, int searchLimit) {
-        this.searchedText = searchedText;
-        this.pharmacies = pharmacies;
-        this.searchLimit = searchLimit;
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getSearchedText() {
