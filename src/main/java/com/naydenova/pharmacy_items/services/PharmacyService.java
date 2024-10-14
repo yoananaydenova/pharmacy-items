@@ -37,7 +37,6 @@ public interface PharmacyService {
                 .map(c -> (HtmlElement) c)
                 .toList();
 
-//        List<Object> byXPath = resultPage.getByXPath("");
         final List<ItemDto> result = pageItems.parallelStream().limit(getLimit()).map(this::createItem).collect(Collectors.toList());
         setLimit(getLimit() - result.size());
         return result;
