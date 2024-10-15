@@ -56,10 +56,9 @@ public class FavoriteSearchesServiceImpl implements FavoriteSearchesService {
         final User user = userRepository.findByLogin(username)
                 .orElseThrow(() -> new AppException("Unknown user", HttpStatus.NOT_FOUND));
 
-        final Search searchToRemove =user.findSearchById(id);
-        user.removeSearch(searchToRemove);
-
-        userRepository.save(user);
+        final Search searchToRemove = searchRepository.findById(id)
+                .orElseThrow(() -> new AppException("The search isn't present in favorite collection!", HttpStatus.NOT_FOUND));
+        searchRepository.deleteById(id);
 
         return """
                 The search %s has been successfully deleted!""".formatted(searchToRemove.getSearchedText());
