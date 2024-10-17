@@ -58,6 +58,9 @@ public class FavoriteItemsServiceImpl implements FavoriteItemsService {
 
         final Item favoriteItemById = user.findFavoriteItemById(id);
         user.removeItemFromFavorites(favoriteItemById);
+        if(favoriteItemById.getUsers().size() == 0){
+            itemRepository.delete(favoriteItemById);
+        }
 
         userRepository.save(user);
 

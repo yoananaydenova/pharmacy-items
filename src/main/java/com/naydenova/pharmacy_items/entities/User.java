@@ -109,17 +109,7 @@ public class User {
         return this.searches.add(search);
     }
 
-    public Search findSearchById(Long id){
-        return this.searches.stream().filter(search -> search.getId().equals(id))
-                .findAny()
-                .orElseThrow(() -> new AppException("The search isn't present in favorite collection!", HttpStatus.NOT_FOUND));
-    }
-
-    public void removeSearch(Search searchToRemove) {
-        this.favorites.remove(searchToRemove);
-    }
-
-    public Item findFavoriteItemById(Long id){
+    public Item findFavoriteItemById(Long id) {
         return this.favorites.stream().filter(item -> item.getId().equals(id))
                 .findAny()
                 .orElseThrow(() -> new AppException("The item isn't present in favorite collection!", HttpStatus.NOT_FOUND));
@@ -127,5 +117,6 @@ public class User {
 
     public void removeItemFromFavorites(Item itemToDelete) {
         this.favorites.remove(itemToDelete);
+        itemToDelete.getUsers().remove(this);
     }
 }
