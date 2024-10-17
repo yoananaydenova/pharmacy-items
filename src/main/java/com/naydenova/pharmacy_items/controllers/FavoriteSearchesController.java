@@ -24,7 +24,7 @@ public class FavoriteSearchesController {
     }
 
     @GetMapping
-    public ResponseEntity<List<SearchDto>> findAll(UsernamePasswordAuthenticationToken token) {
+    public ResponseEntity<List<SearchDto>> findAllByUser(UsernamePasswordAuthenticationToken token) {
 
         final UserDto user = (UserDto)token.getPrincipal();
         final String username =  user.getLogin();
