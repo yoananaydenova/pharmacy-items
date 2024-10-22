@@ -42,22 +42,42 @@ public class UserServiceImpl implements UserService {
     }
 
     public UserDto register(SignUpDto userDto) {
-        Optional<User> optionalUser = userRepository.findByLogin(userDto.login());
+        final Optional<User> optionalUser = userRepository.findByLogin(userDto.login());
 
         if (optionalUser.isPresent()) {
             throw new AppException("Login already exists", HttpStatus.BAD_REQUEST);
         }
 
-        User user = userMapper.signUpToUser(userDto);
+        final User user = userMapper.signUpToUser(userDto);
         user.setPassword(passwordEncoder.encode(CharBuffer.wrap(userDto.password())));
 
-        User savedUser = userRepository.save(user);
+        final User savedUser = userRepository.save(user);
+
+        return userMapper.toUserDto(savedUser);
+    }
+
+    @Override
+    public UserDto editUser(SignUpDto userDto) {
+        final Optional<User> optionalUser = userRepository.findByLogin(userDto.login());
+
+        if (optionalUser.isEmpty()) {
+            throw new AppException("The user does not exist!", HttpStatus.BAD_REQUEST);
+        }
+
+        final User user = userMapper.signUpToUser(userDto);
+        user.setFirstName(userDto.firstName());
+        user.setLastName(userDto.lastName());
+        user.setLogin(userDto.login());
+
+        user.setPassword(passwordEncoder.encode(CharBuffer.wrap(userDto.password())));
+
+        final User savedUser = userRepository.save(user);
 
         return userMapper.toUserDto(savedUser);
     }
 
     public UserDto findByLogin(String login) {
-        User user = userRepository.findByLogin(login)
+        final User user = userRepository.findByLogin(login)
                 .orElseThrow(() -> new AppException("Unknown user", HttpStatus.NOT_FOUND));
         return userMapper.toUserDto(user);
     }

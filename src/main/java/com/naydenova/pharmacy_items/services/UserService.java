@@ -10,6 +10,8 @@ public interface UserService {
 
     UserDto register(SignUpDto userDto);
 
+    UserDto editUser(SignUpDto userDto);
+
     UserDto findByLogin(String login);
 
 
