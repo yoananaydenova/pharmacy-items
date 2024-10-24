@@ -57,18 +57,14 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDto editUser(SignUpDto userDto) {
-        final Optional<User> optionalUser = userRepository.findByLogin(userDto.login());
+    public UserDto editUser(String login, SignUpDto userDto) {
 
-        if (optionalUser.isEmpty()) {
-            throw new AppException("The user does not exist!", HttpStatus.BAD_REQUEST);
-        }
+        final User user = userRepository.findByLogin(login)
+                .orElseThrow(() -> new AppException("The user does not exist!", HttpStatus.BAD_REQUEST));
 
-        final User user = userMapper.signUpToUser(userDto);
         user.setFirstName(userDto.firstName());
         user.setLastName(userDto.lastName());
         user.setLogin(userDto.login());
-
         user.setPassword(passwordEncoder.encode(CharBuffer.wrap(userDto.password())));
 
         final User savedUser = userRepository.save(user);

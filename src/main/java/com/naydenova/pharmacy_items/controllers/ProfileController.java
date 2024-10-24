@@ -29,8 +29,9 @@ public class ProfileController {
     }
 
     @PostMapping()
-    public ResponseEntity<UserDto> editUser(@RequestBody @Valid SignUpDto user) {
-        final UserDto userDto = userService.editUser(user);
+    public ResponseEntity<UserDto> editUser(@RequestBody @Valid SignUpDto userData, UsernamePasswordAuthenticationToken token) {
+        final UserDto user = (UserDto)token.getPrincipal();
+        final UserDto userDto = userService.editUser(user.getLogin(), userData);
         userDto.setToken(userAuthenticationProvider.createToken(userDto.getLogin()));
         return ResponseEntity.ok(userDto);
     }
