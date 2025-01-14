@@ -3,13 +3,12 @@ package com.naydenova.pharmacy_items.services.impl;
 import com.naydenova.pharmacy_items.dtos.ItemDto;
 import com.naydenova.pharmacy_items.entities.Item;
 import com.naydenova.pharmacy_items.entities.User;
-import com.naydenova.pharmacy_items.exceptions.AppException;
+import com.naydenova.pharmacy_items.exceptions.UnknownUserException;
 import com.naydenova.pharmacy_items.mappers.ItemMapper;
 import com.naydenova.pharmacy_items.repositories.ItemRepository;
 import com.naydenova.pharmacy_items.repositories.UserRepository;
 import com.naydenova.pharmacy_items.services.FavoriteItemsService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -33,14 +32,14 @@ public class FavoriteItemsServiceImpl implements FavoriteItemsService {
     public List<ItemDto> findAllByUsername(String username) {
 
         final User user = userRepository.findByLogin(username)
-                .orElseThrow(() ->  new AppException("Unknown user", HttpStatus.NOT_FOUND));
+                .orElseThrow(UnknownUserException::new);
         return user.getFavorites().stream().map(itemMapper::toItemDto).collect(Collectors.toList());
     }
 
     @Override
     public ItemDto saveItemAsFavorite(ItemDto newItem, String username) {
         final User user = userRepository.findByLogin(username)
-                .orElseThrow(() ->  new AppException("Unknown user", HttpStatus.NOT_FOUND));
+                .orElseThrow(UnknownUserException::new);
 
          final Optional< Item> result = itemRepository.findByItemUrl(newItem.getItemUrl());
          final Item item = result.orElseGet(() -> saveItem(newItem));
@@ -54,7 +53,7 @@ public class FavoriteItemsServiceImpl implements FavoriteItemsService {
     public String deleteItemFromFavorite(Long id, String username) {
 
         final User user = userRepository.findByLogin(username)
-                .orElseThrow(() ->  new AppException("Unknown user", HttpStatus.NOT_FOUND));
+                .orElseThrow(UnknownUserException::new);
 
         final Item favoriteItemById = user.findFavoriteItemById(id);
         user.removeItemFromFavorites(favoriteItemById);

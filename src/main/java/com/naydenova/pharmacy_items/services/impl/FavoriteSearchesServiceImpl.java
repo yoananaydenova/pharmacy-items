@@ -5,6 +5,7 @@ import com.naydenova.pharmacy_items.entities.PharmacyName;
 import com.naydenova.pharmacy_items.entities.Search;
 import com.naydenova.pharmacy_items.entities.User;
 import com.naydenova.pharmacy_items.exceptions.AppException;
+import com.naydenova.pharmacy_items.exceptions.UnknownUserException;
 import com.naydenova.pharmacy_items.mappers.SearchMapper;
 import com.naydenova.pharmacy_items.repositories.SearchRepository;
 import com.naydenova.pharmacy_items.repositories.UserRepository;
@@ -35,7 +36,7 @@ public class FavoriteSearchesServiceImpl implements FavoriteSearchesService {
     @Override
     public SearchDto saveSearchAsFavorite(SearchDto newFavoriteSearchDto, String username) {
         final User user = userRepository.findByLogin(username)
-                .orElseThrow(() -> new AppException("Unknown user", HttpStatus.NOT_FOUND));
+                .orElseThrow(UnknownUserException::new);
 
         final Search savedSearch = saveSearch(newFavoriteSearchDto);
 
@@ -47,14 +48,14 @@ public class FavoriteSearchesServiceImpl implements FavoriteSearchesService {
     @Override
     public List<SearchDto> findAllByUsername(String username) {
         final User user = userRepository.findByLogin(username)
-                .orElseThrow(() -> new AppException("Unknown user", HttpStatus.NOT_FOUND));
+                .orElseThrow(UnknownUserException::new);
         return user.getSearches().stream().map(searchMapper::toSearchDto).collect(Collectors.toList());
     }
 
     @Override
     public String deleteSearch(Long id, String username) {
         final User user = userRepository.findByLogin(username)
-                .orElseThrow(() -> new AppException("Unknown user", HttpStatus.NOT_FOUND));
+                .orElseThrow(UnknownUserException::new);
 
         final Search searchToRemove = searchRepository.findById(id)
                 .orElseThrow(() -> new AppException("The search isn't present in favorite collection!", HttpStatus.NOT_FOUND));
