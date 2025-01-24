@@ -1,16 +1,18 @@
 package com.naydenova.pharmacy_items.controllers;
 
 import com.naydenova.pharmacy_items.config.UserAuthenticationProvider;
-import com.naydenova.pharmacy_items.dtos.SignUpDto;
+import com.naydenova.pharmacy_items.dtos.EditUserDto;
 import com.naydenova.pharmacy_items.dtos.UserDto;
 import com.naydenova.pharmacy_items.services.UserService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/profile")
+@Validated
 public class ProfileController {
 
     private final UserService userService;
@@ -29,7 +31,7 @@ public class ProfileController {
     }
 
     @PostMapping()
-    public ResponseEntity<UserDto> editUser(@RequestBody @Valid SignUpDto userData, UsernamePasswordAuthenticationToken token) {
+    public ResponseEntity<UserDto> editUser(@Valid @RequestBody  EditUserDto userData, UsernamePasswordAuthenticationToken token) {
         final UserDto user = (UserDto)token.getPrincipal();
         final UserDto userDto = userService.editUser(user.getLogin(), userData);
         userDto.setToken(userAuthenticationProvider.createToken(userDto.getLogin()));
