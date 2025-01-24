@@ -38,7 +38,7 @@ public class SearchItemsController {
     @GetMapping("/search")
     private ResponseEntity<List<ItemDto>> findAll(@RequestParam List<String> pharms, @RequestParam @Min(1) int limit, @RequestParam @NotBlank String text) {
         if (pharms == null || pharms.isEmpty()) {
-            throw new AppException("The pharmacy list must have at lest 1 item!", HttpStatus.BAD_REQUEST);
+            throw new AppException("The pharmacy list must have at least 1 item!", HttpStatus.BAD_REQUEST);
         }
 
         final List<ItemDto> items = pharms.parallelStream()
